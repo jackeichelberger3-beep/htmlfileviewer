@@ -1,4 +1,5 @@
 window.STUDIO_ACCESS_KEYS = {
   admin: "secret",
-  guest: "demo"
+  demo: "demo123",
+  guest: "guest"
 };
