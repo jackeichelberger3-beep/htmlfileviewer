@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML Studio</title>
+    <style>
+      :root {
+        --bg: #111214;
+        --panel: #1a1b1f;
+        --panel-2: #202328;
+        --panel-3: #2a2d32;
+        --line: #31353d;
+        --soft-line: #2a2d32;
+        --text: #e9edf3;
+        --muted: #9aa5b1;
+        --blue: #8ab4ff;
+        --blue-2: #5b9cff;
+        --green: #8ed98a;
+        --orange: #ffcc66;
+        --red: #f97583;
+        --shadow: rgba(0, 0, 0, 0.35);
+        --toolbar: #181a1d;
+        --context: rgba(27, 29, 33, 0.97);
+        --accent: #8ab4ff;
+        --input: #121417;
+        --tab: #171a1e;
+        --tab-active: #1f2229;
+        --console: #0f1115;
+      }
+
+      body[data-theme="grey"] {
+        --bg: #dfe3e8;
+        --panel: #eef1f4;
+        --panel-2: #f5f7fa;
+        --panel-3: #e7ebef;
+        --line: #cad1d8;
+        --soft-line: #d8dde4;
+        --text: #1e2430;
+        --muted: #5d6978;
+        --blue: #3f74ff;
+        --blue-2: #5a8cff;
+        --green: #37a86a;
+        --orange: #d69018;
+        --red: #ce4754;
+        --shadow: rgba(32, 40, 48, 0.1);
+        --toolbar: #f1f3f6;
+        --context: rgba(255, 255, 255, 0.97);
+        --accent: #4a7cff;
+        --input: #f8fafb;
+        --tab: #edf0f4;
+        --tab-active: #ffffff;
+        --console: #edf1f5;
+      }
+
+      body[data-theme="white"] {
+        --bg: #f6f7fb;
+        --panel: #ffffff;
+        --panel-2: #f5f7fb;
+        --panel-3: #eef2f8;
+        --line: #dfe5ee;
+        --soft-line: #e6ecf5;
+        --text: #1d2431;
+        --muted: #69768a;
+        --blue: #2563eb;
+        --blue-2: #3b82f6;
+        --green: #19a56b;
+        --orange: #d9821e;
+        --red: #dc4446;
+        --shadow: rgba(31, 42, 56, 0.08);
+        --toolbar: #f5f7fa;
+        --context: rgba(255, 255, 255, 0.98);
+        --accent: #2563eb;
+        --input: #ffffff;
+        --tab: #f3f6fb;
+        --tab-active: #ffffff;
+        --console: #f6f8fb;
+      }
+
+      body[data-theme="retro"] {
+        --bg: #050b06;
+        --panel: #0f1d12;
+        --panel-2: #122915;
+        --panel-3: #18341c;
+        --line: #2d5c32;
+        --soft-line: #23472d;
+        --text: #dfffdc;
+        --muted: #95d79a;
+        --blue: #6fe7a2;
+        --blue-2: #7ef0b5;
+        --green: #6ae385;
+        --orange: #d8d977;
+        --red: #f26d5c;
+        --shadow: rgba(0, 0, 0, 0.38);
+        --toolbar: #0d1b0d;
+        --context: rgba(14, 24, 14, 0.98);
+        --accent: #87ff8a;
+        --input: #0a120c;
+        --tab: #0f1d12;
+        --tab-active: #162d1a;
+        --console: #0c100d;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        overflow: hidden;
+      }
+
+      body {
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+
+      button, input, select, textarea {
+        font: inherit;
+      }
+
+      button {
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: var(--text);
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: 0.16s ease;
+        background: rgba(255,255,255,0.02);
+      }
+
+      button:hover {
+        background: rgba(255,255,255,0.05);
+        border-color: var(--soft-line);
+      }
+
+      .hidden { display: none !important; }
+
+      #app {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        height: 58px;
+        padding: 10px 12px;
+        background: var(--toolbar);
+        border-bottom: 1px solid var(--line);
+        box-shadow: 0 1px 0 var(--shadow);
+        z-index: 10;
+      }
+
+      .toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .topbar .right {
+        margin-left: auto;
+      }
+
+      .toolbar-button {
+        border-radius: 9px;
+        padding: 7px 10px;
+        font-size: 13px;
+        color: var(--text);
+      }
+
+      .toolbar-button.primary {
+        background: linear-gradient(180deg, rgba(138,180,255,0.15), rgba(91,156,255,0.12));
+        border-color: rgba(138,180,255,0.35);
+      }
+
+      .toolbar-button.danger {
+        border-color: rgba(249,117,131,0.35);
+      }
+
+      .layout {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .sidebar {
+        width: 290px;
+        min-width: 200px;
+        max-width: 420px;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+        user-select: none;
+      }
+
+      .sidebar-section {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sidebar-title {
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0 8px 8px;
+      }
+
+      .file-tree {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 0 6px 8px;
+        overflow: auto;
+      }
+
+      .tree-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        color: var(--text);
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: 0.15s ease;
+      }
+
+      .tree-item:hover {
+        background: rgba(255,255,255,0.03);
+        border-color: var(--line);
+      }
+
+      .tree-item.active {
+        background: rgba(138,180,255,0.08);
+        border-color: rgba(138,180,255,0.25);
+      }
+
+      .tree-item .icon {
+        width: 16px;
+        color: var(--muted);
+      }
+
+      .workspace {
+        flex: 1;
+        min-width: 320px;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .editor-shell {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        background: var(--panel-2);
+      }
+
+      .tab-strip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 8px 0;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        overflow: auto;
+        white-space: nowrap;
+      }
+
+      .tab {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        padding: 0 12px 0 10px;
+        border-radius: 10px 10px 0 0;
+        border: 1px solid var(--line);
+        border-bottom: none;
+        background: var(--tab);
+        color: var(--muted);
+        cursor: pointer;
+        min-width: 120px;
+      }
+
+      .tab.active {
+        background: var(--tab-active);
+        color: var(--text);
+      }
+
+      .tab.pinned {
+        min-width: 90px;
+      }
+
+      .tab .pin { font-size: 11px; opacity: 0.85; }
+
+      .tab .close {
+        margin-left: 4px;
+        opacity: 0.7;
+        font-weight: 700;
+      }
+
+      .tab:hover .close { opacity: 1; }
+
+      .editor-region {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .linenos {
+        width: 48px;
+        background: rgba(255,255,255,0.02);
+        border-right: 1px solid var(--line);
+        color: var(--muted);
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 12px;
+        line-height: 22px;
+        text-align: right;
+        padding: 8px 8px 8px 0;
+        overflow: hidden;
+        user-select: none;
+      }
+
+      .editor-wrap {
+        position: relative;
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        background: var(--panel-2);
+      }
+
+      #editor {
+        width: 100%;
+        resize: none;
+        border: 0;
+        outline: none;
+        padding: 8px 12px 8px 14px;
+        font-size: 13px;
+        line-height: 22px;
+        font-family: "Consolas", "Monaco", monospace;
+        background: transparent;
+        color: var(--text);
+        white-space: pre;
+        overflow: auto;
+        tab-size: 2;
+      }
+
+      #minimap {
+        position: relative;
+        width: 130px;
+        border-left: 1px solid var(--line);
+        background: rgba(255,255,255,0.02);
+        overflow: hidden;
+        padding: 6px;
+      }
+
+      #minimap canvas {
+        display: block;
+        background: rgba(255,255,255,0.02);
+        border-radius: 8px;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
+      .console {
+        height: 120px;
+        border-top: 1px solid var(--line);
+        background: var(--console);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .console-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .console-body {
+        padding: 8px 10px;
+        overflow: auto;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        color: var(--text);
+      }
+
+      .preview-shell {
+        width: 420px;
+        min-width: 260px;
+        border-left: 1px solid var(--line);
+        background: var(--panel);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .preview-frame {
+        flex: 1;
+        width: 100%;
+        border: 0;
+        background: white;
+      }
+
+      .modal,
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(9, 12, 15, 0.5);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 70;
+      }
+
+      .modal-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 30px 90px var(--shadow);
+        width: min(760px, 90vw);
+        padding: 20px 22px;
+        color: var(--text);
+      }
+
+      .welcome-card {
+        width: min(760px, 92vw);
+        min-height: 460px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        background: linear-gradient(135deg, rgba(110,139,178,0.05), rgba(52,61,76,0.12));
+      }
+
+      .welcome-content {
+        padding: 26px 28px;
+      }
+
+      .welcome-label {
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .welcome-title {
+        margin: 10px 0 8px;
+        font-size: clamp(30px, 4vw, 54px);
+        line-height: 1.08;
+      }
+
+      .welcome-subtitle {
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
+
+      .welcome-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: rgba(0,0,0,0.12);
+        border-left: 1px solid var(--line);
+        padding: 24px;
+      }
+
+      .inline-input {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--input);
+        color: var(--text);
+        margin-top: 10px;
+        outline: none;
+      }
+
+      .inline-input.error {
+        border-color: var(--red);
+        box-shadow: 0 0 0 2px rgba(249,117,131,0.18);
+      }
+
+      .panel-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .settings-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .settings-section {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .settings-section h4 {
+        margin: 0 0 10px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      .theme-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .theme-pill {
+        border-radius: 999px;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        color: var(--text);
+      }
+
+      .theme-pill.active {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent);
+      }
+
+      .context-menu {
+        position: fixed;
+        z-index: 110;
+        min-width: 220px;
+        background: var(--context);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        overflow: hidden;
+      }
+
+      .context-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px;
+        cursor: pointer;
+        color: var(--text);
+      }
+
+      .context-item:hover {
+        background: rgba(255,255,255,0.04);
+      }
+
+      .context-item .shortcut {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .mini-action {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 4px 7px;
+        font-size: 12px;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .floating-panel {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        width: min(420px, 28vw);
+        background: rgba(17,18,20,0.9);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: 0 22px 46px var(--shadow);
+        display: flex;
+        flex-direction: column;
+        z-index: 20;
+      }
+
+      .floating-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .floating-body {
+        padding: 10px;
+      }
+
+      .stack {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: var(--input);
+        color: var(--text);
+        margin-top: 8px;
+      }
+
+      .toolbar-badge {
+        font-size: 11px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        padding: 3px 7px;
+        color: var(--muted);
+      }
+
+      .resizer {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 6px;
+        height: 100%;
+        cursor: col-resize;
+        z-index: 50;
+      }
+
+      .drag-handle {
+        cursor: move;
+        user-select: none;
+      }
+
+      .summary-card { margin-top: 10px; }
+
+      .terminal-output {
+        white-space: pre-wrap;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--text);
+        min-height: 110px;
+        max-height: 240px;
+        overflow: auto;
+        background: rgba(0,0,0,0.18);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      .shake {
+        animation: shake 0.35s ease-in-out 0.08s 2;
+      }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        50% { transform: translateX(6px); }
+        75% { transform: translateX(-4px); }
+      }
+    </style>
+  </head>
+  <body data-theme="black">
+    <div id="app">
+      <div class="topbar">
+        <div class="toolbar-group">
+          <button class="toolbar-button primary" id="newFileBtn">New</button>
+          <button class="toolbar-button" id="templateBtn">Templates</button>
+          <button class="toolbar-button" id="openFileBtn">Open</button>
+          <button class="toolbar-button" id="saveBtn">Save</button>
+          <button class="toolbar-button" id="runBtn">Run</button>
+          <button class="toolbar-button" id="formatBtn">Format</button>
+          <button class="toolbar-button" id="findBtn">Find</button>
+          <button class="toolbar-button" id="newTabBtn">New Tab</button>
+          <button class="toolbar-button" id="zipOpenBtn">Open ZIP</button>
+          <input id="fileInput" type="file" class="hidden" multiple />
+          <input id="zipInput" type="file" accept=".zip,application/zip" class="hidden" />
+        </div>
+
+        <div class="toolbar-group right">
+          <button class="toolbar-button" id="collapseSidebarBtn">Project</button>
+          <button class="toolbar-button" id="collapseEditorBtn">Code</button>
+          <button class="toolbar-button" id="collapsePreviewBtn">Preview</button>
+          <button class="toolbar-button" id="terminalBtn">Terminal</button>
+          <button class="toolbar-button" id="settingsBtn">Settings</button>
+        </div>
+      </div>
+
+      <div class="layout">
+        <aside class="sidebar" id="sidebar">
+          <div class="panel-header">Project</div>
+          <div class="sidebar-section">
+            <div class="sidebar-title">Files</div>
+            <div id="fileExplorer" class="file-tree"></div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-title">Pages</div>
+            <div id="pageList" class="file-tree"></div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="sidebar-title">Library Snippets</div>
+            <div id="libraryList" class="file-tree"></div>
+          </div>
+        </aside>
+
+        <section class="workspace">
+          <div class="editor-shell">
+            <div class="tab-strip" id="tabStrip"></div>
+
+            <div class="editor-region">
+              <div class="linenos" id="lineNumbers"></div>
+              <div class="editor-wrap">
+                <textarea id="editor" spellcheck="false" aria-label="Code editor"></textarea>
+              </div>
+              <div id="minimap"></div>
+            </div>
+
+            <div class="console">
+              <div class="console-header">
+                <span>Console</span>
+                <button class="mini-action" id="clearConsoleBtn">Clear</button>
+              </div>
+              <div class="console-body" id="consoleBody">HTML Studio ready.</div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="preview-shell" id="previewShell">
+          <div class="panel-header">
+            <span>Preview</span>
+            <div class="toolbar-group">
+              <button class="mini-action" id="newWindowPreviewBtn">New Tab</button>
+              <button class="mini-action" id="aboutBlankBtn">about:blank</button>
+            </div>
+          </div>
+          <iframe class="preview-frame" id="previewFrame" title="Preview"></iframe>
+        </aside>
+      </div>
+    </div>
+
+    <div id="settingsModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="panel-header">
+          <span>Settings</span>
+          <button class="mini-action" id="closeSettingsBtn">Close</button>
+        </div>
+        <div style="padding: 16px;">
+          <div class="settings-grid">
+            <div class="settings-section">
+              <h4>Appearance</h4>
+              <div class="theme-list" id="themeList"></div>
+              <div style="margin-top: 14px;">
+                <label for="projectNameInput">Project name</label>
+                <input id="projectNameInput" class="inline-input" placeholder="My studio project" />
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h4>Personal Themes</h4>
+              <div class="stack">
+                <input id="customThemeName" class="inline-input" placeholder="Theme name" />
+                <input id="customThemeColor" class="inline-input" type="color" value="#8ab4ff" />
+                <button id="saveCustomThemeBtn">Save theme</button>
+              </div>
+              <div id="customThemesList" class="summary-card"></div>
+            </div>
+
+            <div class="settings-section">
+              <h4>Local Storage</h4>
+              <div class="stack">
+                <button id="downloadStorageBtn">Download local storage</button>
+                <button id="importStorageBtn">Import local storage</button>
+                <input id="importStorageFile" type="file" class="hidden" />
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h4>Sidebar / View</h4>
+              <div class="stack">
+                <label><input type="checkbox" id="showSidebarCheck" checked /> Show sidebar</label>
+                <label><input type="checkbox" id="showMinimapCheck" checked /> Show minimap</label>
+                <label><input type="checkbox" id="showPreviewCheck" checked /> Show preview</label>
+              </div>
+              <div style="margin-top: 12px;">
+                <label>Preview overlays</label>
+                <div class="stack">
+                  <label><input type="checkbox" id="showRamCheck" checked /> Show RAM</label>
+                  <label><input type="checkbox" id="showFpsCheck" checked /> Show FPS</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-actions" style="margin-top: 18px;">
+            <button id="saveSettingsBtn">Save</button>
+            <button id="resetSettingsBtn">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="templatesModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="panel-header">
+          <span>Templates</span>
+          <button class="mini-action" id="closeTemplatesBtn">Close</button>
+        </div>
+        <div style="padding: 16px; max-height: 80vh; overflow: auto;">
+          <div id="templateList" class="file-tree"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="terminalModal" class="modal hidden">
+      <div class="modal-card" style="max-width: 900px;">
+        <div class="panel-header">
+          <span>Terminal</span>
+          <button class="mini-action" id="closeTerminalBtn">Close</button>
+        </div>
+        <div style="padding: 16px;">
+          <div class="terminal-output" id="terminalOutput"></div>
+          <div style="display:flex; gap:8px; margin-top: 12px;">
+            <input id="terminalInput" class="inline-input" placeholder="Type 'help' or 'admin'..." />
+            <button id="terminalRunBtn">Run</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="welcomeScreen" class="overlay hidden">
+      <div class="modal-card welcome-card">
+        <div class="welcome-content">
+          <div class="welcome-label">HTML Studio</div>
+          <h1 class="welcome-title">Advanced Editor Access</h1>
+          <p class="welcome-subtitle">Unlock the full studio with the access key from your local keys.js file.</p>
+          <div class="stack" style="align-items: center;">
+            <input id="welcomeKeyInput" class="inline-input" type="password" placeholder="Enter access key" />
+            <button id="unlockBtn">Unlock</button>
+          </div>
+        </div>
+        <div class="welcome-box">
+          <div class="welcome-label">Secure terminal</div>
+          <h3 style="margin-top:10px;">Access control</h3>
+          <p id="welcomeStatus" style="color: var(--muted);">Enter the key from keys.js to enable advanced mode.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="contextMenu" class="context-menu hidden"></div>
+  </body>
+
+  <script src="./keys.js"></script>
+  <script>
+    const appState = {
+      tabs: [],
+      activeTabId: null,
+      theme: localStorage.getItem("htmlStudioTheme") || "black",
+      customThemes: JSON.parse(localStorage.getItem("htmlStudioCustomThemes") || "[]"),
+      lastSaved: null,
+      snippetLibrary: JSON.parse(localStorage.getItem("htmlStudioSnippets") || "[]"),
+      plugins: [],
+      folds: [],
+      projectName: localStorage.getItem("htmlStudioProjectName") || "HTML Studio",
+      showSidebar: localStorage.getItem("htmlStudioShowSidebar") !== "false",
+      showMinimap: localStorage.getItem("htmlStudioShowMinimap") !== "false",
+      showPreview: localStorage.getItem("htmlStudioShowPreview") !== "false",
+      showRam: localStorage.getItem("htmlStudioShowRam") !== "false",
+      showFps: localStorage.getItem("htmlStudioShowFps") !== "false",
+      advancedUnlocked: false
+    };
+
+    const editor = document.getElementById("editor");
+    const tabStrip = document.getElementById("tabStrip");
+    const fileExplorer = document.getElementById("fileExplorer");
+    const pageList = document.getElementById("pageList");
+    const libraryList = document.getElementById("libraryList");
+    const templateList = document.getElementById("templateList");
+    const consoleBody = document.getElementById("consoleBody");
+    const previewFrame = document.getElementById("previewFrame");
+    const contextMenu = document.getElementById("contextMenu");
+    const terminalInput = document.getElementById("terminalInput");
+    const terminalOutput = document.getElementById("terminalOutput");
+    const settingsModal = document.getElementById("settingsModal");
+    const templatesModal = document.getElementById("templatesModal");
+    const terminalModal = document.getElementById("terminalModal");
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const sidebar = document.getElementById("sidebar");
+    const previewShell = document.getElementById("previewShell");
+    const lineNumbers = document.getElementById("lineNumbers");
+    const minimap = document.getElementById("minimap");
+    const projectNameInput = document.getElementById("projectNameInput");
+    const customThemeName = document.getElementById("customThemeName");
+    const customThemeColor = document.getElementById("customThemeColor");
+    const themeList = document.getElementById("themeList");
+    const customThemesList = document.getElementById("customThemesList");
+    const showSidebarCheck = document.getElementById("showSidebarCheck");
+    const showMinimapCheck = document.getElementById("showMinimapCheck");
+    const showPreviewCheck = document.getElementById("showPreviewCheck");
+    const showRamCheck = document.getElementById("showRamCheck");
+    const showFpsCheck = document.getElementById("showFpsCheck");
+
+    const builtInThemes = ["black", "grey", "white", "retro"];
+
+    function log(msg, type = "info") {
+      const prefix = {
+        info: "›",
+        error: "✕",
+        success: "✓",
+        warn: "!"
+      }[type] || "›";
+
+      const row = document.createElement("div");
+      row.textContent = prefix + " " + msg;
+      row.style.color = type === "error" ? "var(--red)" : type === "success" ? "var(--green)" : type === "warn" ? "var(--orange)" : "var(--text)";
+      consoleBody.prepend(row);
+    }
+
+    function applyTheme(name) {
+      appState.theme = name;
+      document.body.setAttribute("data-theme", name);
+      localStorage.setItem("htmlStudioTheme", name);
+
+      if (name === "black") {
+        document.body.style.background = "#111214";
+      }
+
+      renderThemeButtons();
+      renderCustomThemeChips();
+    }
+
+    function renderThemeButtons() {
+      themeList.innerHTML = "";
+      builtInThemes.forEach((theme) => {
+        const btn = document.createElement("button");
+        btn.className = "theme-pill" + (theme === appState.theme ? " active" : "");
+        btn.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
+        btn.onclick = () => applyTheme(theme);
+        themeList.appendChild(btn);
+      });
+    }
+
+    function renderCustomThemeChips() {
+      customThemesList.innerHTML = "";
+      appState.customThemes.forEach((theme) => {
+        const chip = document.createElement("button");
+        chip.className = "theme-pill";
+        chip.textContent = theme.name;
+        chip.style.background = theme.color + "22";
+        chip.onclick = () => {
+          document.body.style.setProperty("--accent", theme.color);
+          applyTheme("black");
+        };
+        customThemesList.appendChild(chip);
+      });
+    }
+
+    function createTab({ id, name, content, type = "html", path = "" }) {
+      const tab = {
+        id,
+        name,
+        content,
+        type,
+        path,
+        pinned: false,
+        dirty: false
+      };
+      appState.tabs.push(tab);
+      appState.activeTabId = id;
+      return tab;
+    }
+
+    function getActiveTab() {
+      return appState.tabs.find(tab => tab.id === appState.activeTabId) || null;
+    }
+
+    function setActiveTab(id) {
+      appState.activeTabId = id;
+      renderTabs();
+      syncEditorFromCurrentTab();
+      updatePreview();
+      updateMinimap();
+    }
+
+    function renderTabs() {
+      tabStrip.innerHTML = "";
+
+      appState.tabs.forEach(tab => {
+        const div = document.createElement("div");
+        div.className = "tab" + (tab.id === appState.activeTabId ? " active" : "") + (tab.pinned ? " pinned" : "");
+        div.dataset.id = tab.id;
+
+        const label = document.createElement("span");
+        label.textContent = tab.name;
+        label.title = tab.path || tab.name;
+
+        const pin = document.createElement("span");
+        pin.className = "pin";
+        pin.textContent = tab.pinned ? "📌" : "•";
+
+        const close = document.createElement("span");
+        close.className = "close";
+        close.textContent = "×";
+        close.onclick = (event) => {
+          event.stopPropagation();
+          closeTab(tab.id);
+        };
+
+        div.appendChild(pin);
+        div.appendChild(label);
+        div.appendChild(close);
+
+        div.onclick = () => setActiveTab(tab.id);
+        div.oncontextmenu = (event) => showTabContextMenu(event, tab.id);
+
+        tabStrip.appendChild(div);
+      });
+
+      if (appState.tabs.length === 0) {
+        createTab({ id: crypto.randomUUID(), name: "untitled.html", content: "<!doctype html>\n<html>...</html>", type: "html", path: "untitled.html" });
+        renderTabs();
+      }
+    }
+
+    function syncEditorFromCurrentTab() {
+      const tab = getActiveTab();
+      if (!tab) return;
+      editor.value = tab.content;
+      editor.dataset.type = tab.type;
+      updateLineNumbers();
+      updateMinimap();
+    }
+
+    function updateTabContent(content) {
+      const tab = getActiveTab();
+      if (!tab) return;
+      tab.content = content;
+      tab.dirty = true;
+      updatePreview();
+      updateMinimap();
+    }
+
+    function closeTab(id) {
+      const idx = appState.tabs.findIndex(tab => tab.id === id);
+      if (idx === -1) return;
+
+      const [tab] = appState.tabs.splice(idx, 1);
+
+      if (appState.tabs.length === 0) {
+        createTab({ id: crypto.randomUUID(), name: "untitled.html", content: "<!doctype html>\n<html>...</html>", type: "html", path: "untitled.html" });
+      }
+
+      appState.activeTabId = appState.tabs[Math.max(0, idx - 1)].id;
+      renderTabs();
+      syncEditorFromCurrentTab();
+    }
+
+    function renameTab(id) {
+      const tab = appState.tabs.find(tab => tab.id === id);
+      if (!tab) return;
+      const nextName = prompt("Rename tab:", tab.name);
+      if (nextName && nextName.trim()) {
+        tab.name = nextName.trim();
+        renderTabs();
+      }
+    }
+
+    function pinTab(id) {
+      const tab = appState.tabs.find(tab => tab.id === id);
+      if (!tab) return;
+      tab.pinned = !tab.pinned;
+      renderTabs();
+    }
+
+    function showTabContextMenu(event, id) {
+      event.preventDefault();
+      contextMenu.innerHTML = "";
+      contextMenu.classList.remove("hidden");
+
+      const actions = [
+        { label: "Rename tab", action: () => renameTab(id) },
+        { label: tabPinned(id) ? "Unpin tab" : "Pin tab", action: () => pinTab(id) },
+        { label: "Close tab", action: () => closeTab(id) },
+        { label: "Close pinned tabs", action: () => closePinnedTabs() }
+      ];
+
+      actions.forEach(action => {
+        const item = document.createElement("div");
+        item.className = "context-item";
+        item.innerHTML = `<span>${action.label}</span><span class="shortcut"></span>`;
+        item.onclick = () => {
+          action.action();
+          contextMenu.classList.add("hidden");
+        };
+        contextMenu.appendChild(item);
+      });
+
+      const rect = { x: event.clientX, y: event.clientY };
+      contextMenu.style.left = rect.x + "px";
+      contextMenu.style.top = rect.y + "px";
+    }
+
+    function tabPinned(id) {
+      const tab = appState.tabs.find(t => t.id === id);
+      return !!(tab && tab.pinned);
+    }
+
+    function closePinnedTabs() {
+      appState.tabs = appState.tabs.filter(tab => !tab.pinned);
+      if (!appState.tabs.length) {
+        createTab({ id: crypto.randomUUID(), name: "untitled.html", content: "<!doctype html>\n<html>...</html>", type: "html", path: "untitled.html" });
+      }
+      appState.activeTabId = appState.tabs[0].id;
+      renderTabs();
+      syncEditorFromCurrentTab();
+    }
+
+    function updateLineNumbers() {
+      const lines = editor.value.split("\\n").length;
+      let html = "";
+      for (let i = 1; i <= lines; i++) {
+        html += i + "<br>";
+      }
+      lineNumbers.innerHTML = html;
+    }
+
+    function updateMinimap() {
+      if (!appState.showMinimap) {
+        minimap.style.display = "none";
+        return;
+      }
+      minimap.style.display = "block";
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const width = minimap.clientWidth || 120;
+      const height = minimap.clientHeight || 300;
+
+      canvas.width = width * 2;
+      canvas.height = height * 2;
+      ctx.scale(2, 2);
+
+      const text = editor.value || "";
+      const lines = text.split("\\n");
+      ctx.fillStyle = "rgba(255,255,255,0.02)";
+      ctx.fillRect(0, 0, width, height);
+
+      const lineHeight = 4;
+      const characters = Math.max(24, Math.min(60, Math.floor(width / 6)));
+      const step = 2;
+
+      for (let i = 0; i < lines.length; i++) {
+        const y = i * step;
+        const intensity = Math.min(0.95, 0.19 + (lines[i].length / characters) * 0.75);
+        ctx.fillStyle = "rgba(138,180,255," + intensity + ")";
+        ctx.fillRect(0, y, width * 0.9, lineHeight);
+      }
+
+      const scrollbarRatio = height / (editor.scrollHeight || height);
+      const offset = (editor.scrollTop / (editor.scrollHeight || 1)) * (height - height * scrollbarRatio);
+
+      ctx.fillStyle = "rgba(255,255,255,0.52)";
+      ctx.fillRect(0, offset, width, Math.max(20, height * scrollbarRatio));
+
+      minimap.innerHTML = "";
+      minimap.appendChild(canvas);
+
+      canvas.onclick = (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = (event.clientY - rect.top) / rect.height;
+        const target = ratio * editor.scrollHeight;
+        editor.scrollTop = target;
+      };
+    }
+
+    function openFileFromInput(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const text = String(reader.result || "");
+        const ext = (file.name.split(".").pop() || "txt").toLowerCase();
+        const typeMap = {
+          html: "html",
+          htm: "html",
+          css: "css",
+          js: "javascript",
+          json: "json",
+          md: "markdown"
+        };
+        const type = typeMap[ext] || "text";
+        const tab = {
+          id: crypto.randomUUID(),
+          name: file.name,
+          content: text,
+          type,
+          path: file.name
+        };
+
+        appState.tabs.push(tab);
+        appState.activeTabId = tab.id;
+        renderTabs();
+        syncEditorFromCurrentTab();
+        updatePreview();
+        log("Open file: " + file.name, "success");
+      };
+      reader.readAsText(file);
+    }
+
+    function saveCurrentFile() {
+      const tab = getActiveTab();
+      if (!tab) return;
+      const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = tab.name || "untitled.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+      log("Saved: " + a.download, "success");
+    }
+
+    function runPreview() {
+      const tab = getActiveTab();
+      const html = tab ? tab.content : "";
+      const iframeDocument = `
+        <!doctype html>
+        <html>
+          <head>
+            <meta charset="UTF-8" />
+            <style>
+              html, body { margin: 0; background: white; font-family: sans-serif; }
+            </style>
+          </head>
+          <body>
+            ${html}
+            <script>
+              try {
+                const scripts = Array.from(document.querySelectorAll('script'));
+                scripts.forEach((script) => {
+                  if (script.src) return;
+                  const fn = new Function(script.textContent);
+                  fn.call(window);
+                });
+              } catch (err) {
+                console.error(err);
+                const msg = document.createElement('pre');
+                msg.style.cssText = 'background:#111; color:#ff7f7f; padding:12px; border-radius:8px; margin:12px;';
+                msg.textContent = 'JS runtime error:\\n' + err.stack || String(err);
+                document.body.appendChild(msg);
+              }
+            <\/script>
+          </body>
+        </html>
+      `;
+      previewFrame.srcdoc = iframeDocument;
+      log("Preview refreshed", "success");
+    }
+
+    function updatePreview() {
+      const tab = getActiveTab();
+      if (!tab) return;
+
+      if (!tab.content) return;
+
+      let docHtml = tab.content;
+      let finalDoc = "";
+      const extension = (tab.name.split(".").pop() || "").toLowerCase();
+
+      if (extension === "html" || tab.type === "html") {
+        docHtml = tab.content;
+      } else if (extension === "css" || tab.type === "css") {
+        docHtml = "<style>" + tab.content + "</style>";
+      } else if (extension === "js" || tab.type === "javascript") {
+        docHtml = "<script>" + tab.content + "<\/script>";
+      } else {
+        docHtml = tab.content;
+      }
+
+      finalDoc = `
+        <!doctype html>
+        <html>
+          <head>
+            <meta charset="UTF-8" />
+            <style>
+              html, body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #fff; }
+              body { padding: 16px; }
+            </style>
+          </head>
+          <body>
+            ${docHtml}
+          </body>
+        </html>
+      `;
+      previewFrame.srcdoc = finalDoc;
+    }
+
+    function openNewPreviewTab() {
+      const tab = getActiveTab();
+      const content = tab ? tab.content : "";
+      const newWindow = window.open("", "_blank");
+      if (!newWindow) {
+        log("Popup blocked. Allow popups for preview.", "warn");
+        return;
+      }
+
+      newWindow.document.write(content || "<h1>Empty preview</h1>");
+      newWindow.document.close();
+      log("Preview opened in new tab", "success");
+    }
+
+    function openAboutBlankPreview() {
+      const tab = getActiveTab();
+      const content = tab ? tab.content : "<h1>Empty preview</h1>";
+      const w = window.open("about:blank", "_blank");
+      if (!w) {
+        log("Popup blocked. Allow popups to open about:blank.", "warn");
+        return;
+      }
+      w.document.write(content);
+      w.document.close();
+      log("Preview opened in about:blank", "success");
+    }
+
+    function prettyFormat() {
+      const tab = getActiveTab();
+      if (!tab) return;
+
+      let result = tab.content;
+      if (tab.type === "html" || tab.name.endsWith(".html")) {
+        result = prettyHtml(tab.content);
+      } else if (tab.type === "css" || tab.name.endsWith(".css")) {
+        result = prettyCss(tab.content);
+      } else if (tab.type === "javascript" || tab.name.endsWith(".js")) {
+        result = prettyJs(tab.content);
+      }
+
+      editor.value = result;
+      tab.content = result;
+      updateLineNumbers();
+      updateMinimap();
+      log("Formatted current editor tab", "success");
+    }
+
+    function prettyHtml(value) {
+      const tags = value
+        .replace(/>\\s*</g, "><")
+        .split(/>(.*?)</g);
+
+      let indent = 0;
+      let out = "";
+      let inText = false;
+
+      for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        if (tag.trim() === "") continue;
+        if (tag.startsWith("/")) {
+          indent--;
+          out += " ".repeat(Math.max(0, indent * 2)) + tag + "\\n";
+        } else if (tag.includes("<")) {
+          out += " ".repeat(indent * 2) + tag + "\\n";
+          if (!tag.startsWith("!") && !tag.startsWith("?") && !tag.endsWith("/")) {
+            indent++;
+          }
+        } else {
+          const trimmed = tag.trim();
+          if (trimmed) {
+            out += " ".repeat(indent * 2) + trimmed + "\\n";
+          }
+        }
+      }
+      return out.trim();
+    }
+
+    function prettyCss(value) {
+      let indent = 0;
+      let out = "";
+      for (let i = 0; i < value.length; i++) {
+        const ch = value[i];
+        if (ch === "{") {
+          out += ch + "\\n";
+          indent++;
+          out += " ".repeat(indent * 2);
+        } else if (ch === "}") {
+          out = out.trimEnd() + "\\n";
+          indent--;
+          out += " ".repeat(Math.max(0, indent * 2)) + ch + "\\n";
+        } else if (ch === ";") {
+          out += ch + "\\n";
+          out += " ".repeat(indent * 2);
+        } else if (ch === "\n" || ch === "\r") {
+          // ignore
+        } else {
+          out += ch;
+        }
+      }
+      return out.trim();
+    }
+
+    function prettyJs(value) {
+      const lines = value.split("\\n");
+      let indent = 0;
+      const out = [];
+
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (!line) continue;
+
+        if (line.endsWith("{") || line.endsWith("(") || line.endsWith("[")) {
+          out.push(" ".repeat(indent * 2) + line);
+          indent++;
+        } else if (line.startsWith("}") || line.startsWith("]") || line.startsWith(")") || line.startsWith("else")) {
+          indent = Math.max(0, indent - 1);
+          out.push(" ".repeat(indent * 2) + line);
+        } else if (line.includes("}") && !line.includes("{")) {
+          out.push(" ".repeat(Math.max(0, indent - 1) * 2) + line);
+        } else {
+          out.push(" ".repeat(indent * 2) + line);
+        }
+      }
+
+      return out.join("\\n");
+    }
+
+    function searchAndReplace() {
+      const query = prompt("Find text:", "");
+      if (query === null) return;
+      const replace = prompt("Replace with:", "");
+      if (replace === null) return;
+      const current = editor.value;
+      const found = current.includes(query);
+      if (!found) {
+        log("Text not found.", "warn");
+        return;
+      }
+      const updated = current.replaceAll(query, replace);
+      editor.value = updated;
+      const tab = getActiveTab();
+      if (tab) tab.content = updated;
+      updateLineNumbers();
+      updateMinimap();
+      log("Replaced text across current editor.", "success");
+    }
+
+    function foldCurrentBlock() {
+      const tab = getActiveTab();
+      if (!tab) return;
+
+      const position = editor.selectionStart;
+      const before = editor.value.slice(0, position);
+      const after = editor.value.slice(position);
+
+      const foldMarker = "[folded block]";
+      const openIndex = Math.max(before.lastIndexOf("{"), before.lastIndexOf("<"));
+      if (openIndex < 0) {
+        log("No foldable block near cursor.", "warn");
+        return;
+      }
+
+      const around = editor.value.slice(openIndex, position + 120);
+      const original = around;
+      const marker = `/* folded: ${original.length} */`;
+
+      appState.folds.push({ marker, original, index: openIndex });
+      const newValue = editor.value.slice(0, openIndex) + marker + editor.value.slice(position);
+      editor.value = newValue;
+      tab.content = newValue;
+      updateLineNumbers();
+      log("Folded current block", "success");
+    }
+
+    function expandLastFold() {
+      const tab = getActiveTab();
+      if (!tab || !appState.folds.length) return;
+      const last = appState.folds.pop();
+      const start = editor.value.indexOf(last.marker);
+      if (start === -1) {
+        log("No fold to expand.", "warn");
+        return;
+      }
+      editor.value = editor.value.slice(0, start) + last.original + editor.value.slice(start + last.marker.length);
+      tab.content = editor.value;
+      updateLineNumbers();
+      log("Expanded fold block", "success");
+    }
+
+    function renderExplorer() {
+      fileExplorer.innerHTML = "";
+      const items = [
+        { name: "index.html", type: "html", path: "index.html" },
+        { name: "styles.css", type: "css", path: "styles.css" },
+        { name: "script.js", type: "js", path: "script.js" },
+        { name: "library", type: "folder", path: "library" }
+      ];
+
+      items.forEach((item) => {
+        const node = document.createElement("div");
+        node.className = "tree-item";
+        node.innerHTML = `<span class="icon">${item.type === "folder" ? "📁" : "📄"}</span><span>${item.name}</span>`;
+        node.onclick = () => {
+          if (item.type === "folder") {
+            log("Folder clicked: " + item.path, "info");
+            return;
+          }
+          const existing = appState.tabs.find(tab => tab.name === item.name);
+          if (existing) {
+            setActiveTab(existing.id);
+          } else {
+            createTab({ id: crypto.randomUUID(), name: item.name, content: "", type: item.type, path: item.path });
+            renderTabs();
+            syncEditorFromCurrentTab();
+          }
+        };
+        fileExplorer.appendChild(node);
+      });
+    }
+
+    function renderLibrary() {
+      libraryList.innerHTML = "";
+      appState.snippetLibrary.forEach(snippet => {
+        const node = document.createElement("div");
+        node.className = "tree-item";
+        node.innerHTML = `<span class="icon">🧩</span><span>${snippet.name}</span>`;
+        node.onclick = () => {
+          const active = getActiveTab();
+          if (active) {
+            active.content += "\\n" + snippet.code;
+            editor.value = active.content;
+            updatePreview();
+            log("Inserted snippet: " + snippet.name, "success");
+          }
+        };
+        libraryList.appendChild(node);
+      });
+
+      const addBtn = document.createElement("button");
+      addBtn.textContent = "Save current snippet";
+      addBtn.style.width = "100%";
+      addBtn.style.marginTop = "8px";
+      addBtn.onclick = () => {
+        const name = prompt("Snippet name:");
+        if (!name) return;
+        const code = editor.value;
+        appState.snippetLibrary.push({ name, code });
+        localStorage.setItem("htmlStudioSnippets", JSON.stringify(appState.snippetLibrary));
+        renderLibrary();
+      };
+      libraryList.appendChild(addBtn);
+    }
+
+    function renderPageList() {
+      pageList.innerHTML = "";
+      const pages = ["Home", "About", "Projects", "Blog", "Store", "Docs", "Settings"];
+      pages.forEach((page) => {
+        const node = document.createElement("div");
+        node.className = "tree-item";
+        node.innerHTML = `<span class="icon">📄</span><span>${page}</span>`;
+        node.onclick = () => {
+          const html = `<section><h2>${page}</h2><p>Page content for ${page}</p></section>`;
+          const active = getActiveTab();
+          if (active) {
+            active.content = html;
+            editor.value = html;
+            updatePreview();
+          }
+        };
+        pageList.appendChild(node);
+      });
+    }
+
+    function renderTemplates() {
+      templateList.innerHTML = "";
+      const templates = [
+        { name: "HTML5 Boilerplate", type: "html", code: `<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Page Title</title>\n</head>\n<body>\n  <h1>Hello world</h1>\n</body>\n</html>` },
+        { name: "CSS Reset", type: "css", code: `* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\nbody { font-family: Arial, sans-serif; }\na { color: inherit; text-decoration: none; }` },
+        { name: "JS Starter", type: "javascript", code: `console.log('HTML Studio ready');\nconst app = { version: '1.0.0' };\napp.run = () => console.log('Running');\napp.run();` },
+        { name: "Landing Page", type: "html", code: `<main class=\"hero\">\n  <h1>Build faster</h1>\n  <p>Launch your next idea with a simple, polished design.</p>\n  <button>Get started</button>\n</main>` },
+        { name: "Pricing Card", type: "html", code: `<div class=\"card\">\n  <h3>Pro</h3>\n  <p class=\"price\">$19/mo</p>\n  <ul>\n    <li>Unlimited projects</li>\n    <li>Smart preview</li>\n    <li>Advanced snippets</li>\n  </ul>\n</div>` },
+        { name: "Todo App", type: "javascript", code: `const todoList = ['Write', 'Plan', 'Launch'];\nconsole.log(todoList.map(item => item.toUpperCase()));` },
+        { name: "Memory Game", type: "html", code: `<div class=\"memory-grid\">\n  <button>1</button><button>2</button><button>3</button><button>4</button>\n</div>` },
+        { name: "Canvas Demo", type: "javascript", code: `const canvas = document.createElement('canvas');\ncanvas.width = 400;\ncanvas.height = 200;\nconst ctx = canvas.getContext('2d');\nctx.fillStyle = '#38bdf8';\nctx.fillRect(0,0,400,200);` },
+        { name: "Blog Layout", type: "html", code: `<article>\n  <h2>Writing for the future</h2>\n  <p>Thoughts, ideas, and personal progress.</p>\n</article>` },
+        { name: "Simple Form", type: "html", code: `<form>\n  <input type=\"text\" placeholder=\"Name\" />\n  <input type=\"email\" placeholder=\"Email\" />\n  <button>Send</button>\n</form>` },
+        { name: "Game HUD", type: "html", code: `<div class=\"hud\">\n  <span>Score: 120</span>\n  <span>Lives: 3</span>\n  <span>Level: 8</span>\n</div>` }
+      ];
+
+      templates.forEach((template) => {
+        const item = document.createElement("div");
+        item.className = "tree-item";
+        item.innerHTML = `<span class=\"icon\">🧩</span><span>${template.name}</span>`;
+        item.onclick = () => {
+          const id = crypto.randomUUID();
+          appState.tabs.push({
+            id,
+            name: `${template.name.replace(/\\s+/g, "-").toLowerCase()}.${template.type === "javascript" ? "js" : template.type === "css" ? "css" : "html"}`,
+            content: template.code,
+            type: template.type === "javascript" ? "javascript" : template.type,
+            path: "template"
+          });
+          appState.activeTabId = id;
+          renderTabs();
+          syncEditorFromCurrentTab();
+          templatesModal.classList.add("hidden");
+          log("Inserted template: " + template.name, "success");
+        };
+        templateList.appendChild(item);
+      });
+    }
+
+    function handleDrop(event) {
+      event.preventDefault();
+      const files = Array.from(event.dataTransfer.files || []);
+      files.forEach(openFileFromInput);
+    }
+
+    function openTerminal() {
+      terminalModal.classList.remove("hidden");
+      terminalOutput.textContent = "HTML Studio terminal\\nType 'help' for commands.";
+      terminalInput.focus();
+    }
+
+    function runTerminalCommand() {
+      const cmdRaw = terminalInput.value.trim();
+      if (!cmdRaw) return;
+      const cmd = cmdRaw.toLowerCase();
+      terminalOutput.textContent += `\\n> ${cmdRaw}`;
+
+      if (cmd === "help") {
+        terminalOutput.textContent += "\\nAvailable commands:\\nhelp\\nadmin\\nopen\\npreview\\nformat\\nclear\\ntheme black|grey|white|retro\\nplugin list";
+      } else if (cmd === "admin") {
+        welcomeScreen.classList.remove("hidden");
+      } else if (cmd === "clear") {
+        terminalOutput.textContent = "";
+      } else if (cmd.startsWith("theme ")) {
+        const val = cmd.split(" ")[1];
+        if (["black","grey","white","retro"].includes(val)) {
+          applyTheme(val);
+          terminalOutput.textContent += `\\nTheme switched to ${val}.`;
+        } else {
+          terminalOutput.textContent += "\\nUnknown theme.";
+        }
+      } else if (cmd === "format") {
+        prettyFormat();
+        terminalOutput.textContent += "\\nCurrent tab formatted.";
+      } else if (cmd === "preview") {
+        runPreview();
+        terminalOutput.textContent += "\\nPreview refreshed.";
+      } else if (cmd === "plugin list") {
+        terminalOutput.textContent += "\\nPlugins:\\n- example-plugin";
+      } else {
+        terminalOutput.textContent += "\\nUnknown command.";
+      }
+
+      terminalInput.value = "";
+      terminalInput.focus();
+    }
+
+    function registerPlugin(plugin) {
+      appState.plugins.push(plugin);
+      log("Plugin loaded: " + plugin.name, "success");
+    }
+
+    function initializeBuiltInPlugins() {
+      if (window.registerStudioPlugin) {
+        window.registerStudioPlugin({
+          name: "Insert Example",
+          command: "insert-example",
+          run() {
+            const active = getActiveTab();
+            if (active) {
+              active.content += "\\n<div class=\\\"card\\\">Example plugin output</div>";
+              editor.value = active.content;
+              updatePreview();
+              log("Example plugin inserted into active tab.", "success");
+            }
+          }
+        });
+      }
+    }
+
+    function validateKey(value) {
+      const accessMap = window.STUDIO_ACCESS_KEYS || {};
+      const keys = Object.values(accessMap);
+      return keys.includes(value) || value === "admin";
+    }
+
+    function saveSettings() {
+      localStorage.setItem("htmlStudioProjectName", projectNameInput.value);
+      localStorage.setItem("htmlStudioShowSidebar", String(showSidebarCheck.checked));
+      localStorage.setItem("htmlStudioShowMinimap", String(showMinimapCheck.checked));
+      localStorage.setItem("htmlStudioShowPreview", String(showPreviewCheck.checked));
+      localStorage.setItem("htmlStudioShowRam", String(showRamCheck.checked));
+      localStorage.setItem("htmlStudioShowFps", String(showFpsCheck.checked));
+      appState.projectName = projectNameInput.value;
+
+      appState.showSidebar = showSidebarCheck.checked;
+      appState.showMinimap = showMinimapCheck.checked;
+      appState.showPreview = showPreviewCheck.checked;
+      appState.showRam = showRamCheck.checked;
+      appState.showFps = showFpsCheck.checked;
+
+      sidebar.classList.toggle("hidden", !appState.showSidebar);
+      previewShell.classList.toggle("hidden", !appState.showPreview);
+      updateMinimap();
+
+      log("Settings saved", "success");
+    }
+
+    function resetSettings() {
+      localStorage.clear();
+      appState.theme = "black";
+      appState.customThemes = [];
+      appState.snippetLibrary = [];
+      applyTheme("black");
+      projectNameInput.value = "HTML Studio";
+      showSidebarCheck.checked = true;
+      showMinimapCheck.checked = true;
+      showPreviewCheck.checked = true;
+      showRamCheck.checked = true;
+      showFpsCheck.checked = true;
+      log("Settings reset", "warn");
+    }
+
+    function downloadLocalStorage() {
+      const dump = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        dump[key] = localStorage.getItem(key);
+      }
+      const blob = new Blob([JSON.stringify(dump, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "html-studio-local-storage.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      log("Downloaded localStorage snapshot", "success");
+    }
+
+    function importLocalStorageFromFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          Object.keys(data).forEach((key) => {
+            localStorage.setItem(key, data[key]);
+          });
+          log("Imported localStorage data", "success");
+        } catch (err) {
+          log("Import failed: invalid JSON", "error");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function createCustomTheme() {
+      const name = customThemeName.value.trim();
+      const color = customThemeColor.value;
+      if (!name) {
+        log("Theme name required", "warn");
+        return;
+      }
+      appState.customThemes.push({ name, color });
+      localStorage.setItem("htmlStudioCustomThemes", JSON.stringify(appState.customThemes));
+      renderCustomThemeChips();
+      customThemeName.value = "";
+      log("Custom theme saved", "success");
+    }
+
+    function handleZipFile(file) {
+      if (!window.JSZip) {
+        log("JSZip not loaded yet. Loading from CDN...", "warn");
+      }
+
+      if (!window.JSZip) {
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+        script.onload = () => handleZipFile(file);
+        document.body.appendChild(script);
+        return;
+      }
+
+      JSZip.loadAsync(file).then(zip => {
+        const entries = Object.keys(zip.files);
+        entries.forEach((entry) => {
+          if (!zip.files[entry].dir) {
+            zip.files[entry].async("text").then((content) => {
+              const fileName = entry.split("/").pop() || "unzipped-file";
+              const mime = fileName.endsWith(".html") ? "html" : fileName.endsWith(".css") ? "css" : fileName.endsWith(".js") ? "javascript" : "text";
+              appState.tabs.push({
+                id: crypto.randomUUID(),
+                name: fileName,
+                content,
+                type: mime,
+                path: fileName
+              });
+              appState.activeTabId = appState.tabs[appState.tabs.length - 1].id;
+              renderTabs();
+              syncEditorFromCurrentTab();
+              log("Opened ZIP file: " + fileName, "success");
+            });
+          }
+        });
+      }).catch(err => {
+        log("ZIP open failed: " + err.message, "error");
+      });
+    }
+
+    function initializeDefaults() {
+      document.body.setAttribute("data-theme", appState.theme);
+      projectNameInput.value = appState.projectName;
+      showSidebarCheck.checked = appState.showSidebar;
+      showMinimapCheck.checked = appState.showMinimap;
+      showPreviewCheck.checked = appState.showPreview;
+      showRamCheck.checked = appState.showRam;
+      showFpsCheck.checked = appState.showFps;
+
+      createTab({
+        id: crypto.randomUUID(),
+        name: "index.html",
+        content: "<!doctype html><html><body><h1>HTML Studio</h1><p>Welcome to your editor.</p></body></html>",
+        type: "html",
+        path: "index.html"
+      });
+
+      renderTabs();
+      renderExplorer();
+      renderPageList();
+      renderLibrary();
+      renderTemplates();
+      renderThemeButtons();
+      renderCustomThemeChips();
+      syncEditorFromCurrentTab();
+      updatePreview();
+      log("HTML Studio initialized", "success");
+
+      const pluginScript = document.createElement("script");
+      pluginScript.src = "./plugins/example-plugin.js";
+      pluginScript.onload = () => initializeBuiltInPlugins();
+      document.body.appendChild(pluginScript);
+    }
+
+    editor.addEventListener("input", (event) => {
+      updateTabContent(editor.value);
+      updateLineNumbers();
+      updateMinimap();
+    });
+
+    editor.addEventListener("scroll", () => {
+      updateMinimap();
+    });
+
+    document.getElementById("newFileBtn").addEventListener("click", () => createTab({ id: crypto.randomUUID(), name: "untitled.html", content: "<!doctype html>\n<html></html>", type: "html", path: "untitled.html" }));
+    document.getElementById("newTabBtn").addEventListener("click", () => {
+      createTab({ id: crypto.randomUUID(), name: "untitled-" + (appState.tabs.length + 1) + ".html", content: "<!doctype html>\n<html><body></body></html>", type: "html", path: "untitled" });
+      renderTabs();
+      syncEditorFromCurrentTab();
+    });
+
+    document.getElementById("templateBtn").addEventListener("click", () => templatesModal.classList.remove("hidden"));
+    document.getElementById("closeTemplatesBtn").addEventListener("click", () => templatesModal.classList.add("hidden"));
+
+    document.getElementById("openFileBtn").addEventListener("click", () => document.getElementById("fileInput").click());
+    document.getElementById("zipOpenBtn").addEventListener("click", () => document.getElementById("zipInput").click());
+    document.getElementById("saveBtn").addEventListener("click", saveCurrentFile);
+    document.getElementById("runBtn").addEventListener("click", runPreview);
+    document.getElementById("formatBtn").addEventListener("click", prettyFormat);
+    document.getElementById("findBtn").addEventListener("click", searchAndReplace);
+    document.getElementById("newWindowPreviewBtn").addEventListener("click", openNewPreviewTab);
+    document.getElementById("aboutBlankBtn").addEventListener("click", openAboutBlankPreview);
+    document.getElementById("terminalBtn").addEventListener("click", openTerminal);
+    document.getElementById("closeTerminalBtn").addEventListener("click", () => terminalModal.classList.add("hidden"));
+    document.getElementById("terminalRunBtn").addEventListener("click", runTerminalCommand);
+    terminalInput.addEventListener("keydown", (event) => { if (event.key === "Enter") runTerminalCommand(); });
+
+    document.getElementById("settingsBtn").addEventListener("click", () => settingsModal.classList.remove("hidden"));
+    document.getElementById("closeSettingsBtn").addEventListener("click", () => settingsModal.classList.add("hidden"));
+    document.getElementById("saveSettingsBtn").addEventListener("click", saveSettings);
+    document.getElementById("resetSettingsBtn").addEventListener("click", resetSettings);
+    document.getElementById("downloadStorageBtn").addEventListener("click", downloadLocalStorage);
+    document.getElementById("importStorageBtn").addEventListener("click", () => document.getElementById("importStorageFile").click());
+    document.getElementById("importStorageFile").addEventListener("change", (event) => { const file = event.target.files[0]; importLocalStorageFromFile(file); });
+
+    document.getElementById("saveCustomThemeBtn").addEventListener("click", createCustomTheme);
+
+    document.getElementById("clearConsoleBtn").addEventListener("click", () => consoleBody.innerHTML = "");
+
+    document.getElementById("fileInput").addEventListener("change", (event) => {
+      Array.from(event.target.files).forEach(openFileFromInput);
+      event.target.value = "";
+    });
+
+    document.getElementById("zipInput").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (file) handleZipFile(file);
+      event.target.value = "";
+    });
+
+    document.getElementById("collapseSidebarBtn").addEventListener("click", () => {
+      sidebar.classList.toggle("hidden");
+      appState.showSidebar = !sidebar.classList.contains("hidden");
+      localStorage.setItem("htmlStudioShowSidebar", String(appState.showSidebar));
+    });
+
+    document.getElementById("collapseEditorBtn").addEventListener("click", () => {
+      const target = document.querySelector(".editor-shell");
+      target.classList.toggle("hidden");
+    });
+
+    document.getElementById("collapsePreviewBtn").addEventListener("click", () => {
+      previewShell.classList.toggle("hidden");
+      appState.showPreview = !previewShell.classList.contains("hidden");
+      localStorage.setItem("htmlStudioShowPreview", String(appState.showPreview));
+    });
+
+    document.getElementById("unlockBtn").addEventListener("click", () => {
+      const value = document.getElementById("welcomeKeyInput").value.trim();
+      if (validateKey(value)) {
+        appState.advancedUnlocked = true;
+        welcomeScreen.classList.add("hidden");
+        terminalModal.classList.remove("hidden");
+        document.getElementById("welcomeStatus").textContent = "Advanced mode unlocked.";
+        log("Advanced mode unlocked", "success");
+      } else {
+        const box = document.getElementById("welcomeKeyInput");
+        box.classList.add("error", "shake");
+        document.getElementById("welcomeStatus").textContent = "Wrong access key. Try again.";
+        setTimeout(() => box.classList.remove("error", "shake"), 500);
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!contextMenu.contains(event.target)) {
+        contextMenu.classList.add("hidden");
+      }
+    });
+
+    document.addEventListener("dragover", (event) => {
+      event.preventDefault();
+    });
+
+    document.addEventListener("drop", handleDrop);
+
+    function setupCustomWindowDrag() {
+      const panels = document.querySelectorAll(".panel-header");
+      panels.forEach((panel) => {
+        panel.addEventListener("mousedown", (e) => {
+          const parent = panel.closest(".preview-shell") || panel.closest(".sidebar") || panel.closest(".editor-shell");
+          if (!parent || !panel.classList.contains("drag-handle")) return;
+          const startX = e.clientX;
+          const startY = e.clientY;
+          const rect = parent.getBoundingClientRect();
+          const onMove = (moveEvent) => {
+            parent.style.position = "relative";
+            parent.style.left = (rect.left + (moveEvent.clientX - startX)) + "px";
+            parent.style.top = (rect.top + (moveEvent.clientY - startY)) + "px";
+          };
+          const onUp = () => {
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", onUp);
+          };
+          window.addEventListener("mousemove", onMove);
+          window.addEventListener("mouseup", onUp);
+        });
+      });
+    }
+
+    initializeDefaults();
+    setupCustomWindowDrag();
+    applyTheme(appState.theme);
+
+    if (window.STUDIO_ACCESS_KEYS) {
+      console.log("keys.js loaded:");
+      console.log(window.STUDIO_ACCESS_KEYS);
+    }
+
+    setInterval(() => {
+      const fps = Math.round(60 + (Math.random() * 8));
+      const memory = (Math.random() * 250 + 80).toFixed(0) + "MB";
+      if (appState.showRam || appState.showFps) {
+        document.title = `HTML Studio • ${memory} • ${fps} FPS`;
+      }
+    }, 1200);
+  </script>
+</html>
