@@ -774,8 +774,8 @@ function openAboutBlankPreview() {
 }
 
 function validateAccessKey(value) {
-  const allowed = Object.values(window.STUDIO_ACCESS_KEYS || {});
-  return allowed.includes(value);
+  const passwords = window.STUDIO_ACCESS_KEYS || [];
+  return passwords.includes(String(value).trim());
 }
 
 function runTerminalCommand() {
@@ -811,15 +811,17 @@ function runTerminalCommand() {
 
 function unlockWelcomeScreen() {
   const value = welcomeKeyInput.value.trim();
+
   if (validateAccessKey(value)) {
     state.advancedUnlocked = true;
     welcomeScreen.classList.add("hidden");
     terminalModal.classList.remove("hidden");
     log("Advanced mode unlocked", "success");
   } else {
-    welcomeKeyInput.classList.add("shake");
-    setTimeout(() => welcomeKeyInput.classList.remove("shake"), 300);
-    log("Wrong access key", "error");
+    const input = welcomeKeyInput;
+    input.classList.add("shake");
+    setTimeout(() => input.classList.remove("shake"), 300);
+    log("Wrong password", "error");
   }
 }
 
